@@ -26,7 +26,7 @@ var goalImage;
 // Physics Variables
 const GRAVITY = 0.5;
 const DEFAULT_VELOCITY = 5;
-const DEFAULT_JUMP_FORCE = -5;
+const DEFAULT_JUMP_FORCE = -10; // here i changed -5 to -10
 var currentJumpForce;
 
 // Timing and Control Variables
@@ -85,6 +85,7 @@ function draw() {
   updatePlayer();
   updateDisplay();
   drawSprites();
+
 }
 
 // Called when player wins or loses
@@ -111,7 +112,7 @@ function buildLevel() {
   // best method is to draw sprites from left to right on the screen
   createPlatform(50, 690, 5);
   createCollectable(300, 340);
-  createMonster(500, 600, 0);
+  createMonster(500, 600, -1);
 }
 
 // Creates a player sprite and adds animations and a collider to it
@@ -180,6 +181,11 @@ function createCollectable(x, y) {
 // function calls executeLoss(). If a monster falls off the screen, it is
 // removed from the game.
 function applyGravity() {
+
+  if (player.position.y >= height ) {
+    executeLoss();
+  }
+
     player.velocity.y += GRAVITY;
     if(player.previousPosition.y !== player.position.y) {
       playerGrounded = false;
@@ -192,12 +198,18 @@ function applyGravity() {
     }
 }
 
+
+
+
 // Called in the draw() function. Continuously checks for collisions and overlaps
 // between all relevant game objects. Depending on the collision or overlap that
 // occurs, a specific callback function is run.
 function checkCollisions() {
     player.collide(platforms, platformCollision);
     monsters.collide(platforms, platformCollision);
+    player.collide(monsters, playerMonsterCollision);
+    player.overlap(collectables, getCollectable);
+
 }
 
 // Callback function that runs when the player or a monster collides with a
@@ -218,11 +230,37 @@ function platformCollision(sprite, platform) {
 
 // Callback function that runs when the player collides with a monster.
 function playerMonsterCollision(player, monster) {
+  if(player.touching.bottom) {
+       monster.remove();
+
+var defeatedMonster = createSprite(monster.position.x, monster.position.y, 0, 0);
+defeatedMonster.addImage(monsterDefeatImage);
+defeatedMonster.mirrorX(monster.mirrorX());
+defeatedMonster.scale = 0.25;
+defeatedMonster.life = 40;
+
+currentJumpTime = MAX_JUMP_TIME;
+currentJumpForce = DEFAULT_JUMP_FORCE;
+player.velocity.y = currentJumpForce;
+millis = new Date();
+score++;
+
+
+}
+else {
+executeLoss();
+}
 
 }
 
 // Callback function that runs when the player overlaps with a collectable.
 function getCollectable(player, collectable) {
+if(player.touching) {
+  collectable.remove();
+  score ++;
+}
+
+
 
 }
 
@@ -340,6 +378,11 @@ function updateDisplay() {
   // turn camera back on
   camera.on();
 
+  camera.position.x = player.position.x;
+
+for(var i = 0; i < collectables. length; i++)
+collectables[i].rotation += 5;
+
 }
 
 // Called when the player has won the game (e.g., reached the goal at the end).
@@ -353,5 +396,7 @@ function executeWin() {
 // a monster). Anything can happen here, but the most important thing is that we
 // call resetGame() after a short delay.
 function executeLoss() {
+ noLoop();
+  setTimeout(resetGame, 1000);
 
 }
