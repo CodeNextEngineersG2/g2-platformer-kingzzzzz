@@ -48,7 +48,7 @@ window.addEventListener("keydown", function(e) {
 
 function preload() {
   // load background image
-  backgroundImage = loadImage("assets/img/backgrounds/BG.png");
+  backgroundImage =loadImage("assets/img/backgrounds/BG-2.png");//loadImage("assets/img/backgrounds/BG.png"); older BG
 
   // load platform images
   platformImageFirst = loadImage("assets/img/tiles/Tile (14).png");
@@ -56,10 +56,10 @@ function preload() {
   platformImageLast = loadImage("assets/img/tiles/Tile (16).png");
 
   // load player animations
-  playerIdleAnimation = loadAnimation("assets/img/kunoichi/Idle__000.png", "assets/img/kunoichi/Idle__009.png");
-  playerRunAnimation = loadAnimation("assets/img/kunoichi/Run__000.png", "assets/img/kunoichi/Run__009.png");
-  playerJumpAnimation = loadAnimation("assets/img/kunoichi/Jump__004.png");
-  playerFallAnimation = loadAnimation("assets/img/kunoichi/Jump__009.png");
+  playerIdleAnimation = loadAnimation("assets/img/Dino/Idle__001.png" ,"assets/img/Dino/Idle__010.png");
+  playerRunAnimation = loadAnimation("assets/img/Dino/Run (1).png", "assets/img/Dino/Run (8).png");
+  playerJumpAnimation = loadAnimation("assets/img/Dino/jump__001.png", "assets/img/Dino/jump__012.png");
+  playerFallAnimation = loadAnimation("assets/img/Dino/Jump (7).png");
 
   // load monster animations
   monsterWalkAnimation = loadAnimation("assets/img/monster/frame-1.png", "assets/img/monster/frame-10.png");
@@ -110,6 +110,11 @@ function buildLevel() {
 
   // create platforms, monsters, and any other game objects
   // best method is to draw sprites from left to right on the screen
+
+  createPlatform(2400, 340,4);
+  createPlatform(1400, 400, 6); // added
+  createCollectable(400, 340);// added
+  createPlatform(800,540, 4); // added
   createPlatform(50, 690, 5);
   createCollectable(300, 340);
   createMonster(500, 600, -1);
@@ -123,8 +128,8 @@ function createPlayer() {
   player.addAnimation("jump", playerJumpAnimation).looping = false;
   player.addAnimation("fall", playerFallAnimation).looping = false;
   player.scale = 0.25;
-  player.setCollider("rectangle", 0, 0, 250, 490);
-  //player.debug = true;
+  player.setCollider("rectangle", 0, 0, 400, 380);
+  player.debug = true;
 }
 
 // Creates a platform of specified length (len) at x, y.
